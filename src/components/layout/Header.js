@@ -19,8 +19,8 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-30 safe-top">
-      <div className="ios-surface mx-auto max-w-3xl px-4 py-3">
+    <header className="fixed top-0 inset-x-0 z-50 safe-top bg-background/95 backdrop-blur-md border-b border-black/5 dark:border-white/5">
+      <div className="mx-auto max-w-3xl px-4 py-3">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push("/")}

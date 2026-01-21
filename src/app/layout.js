@@ -88,7 +88,7 @@ export default function RootLayout({ children }) {
     <html lang="id">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}>
         <Header />
-        <main className="pb-24">
+        <main className="pt-16 pb-24">
           <Container>{children}</Container>
         </main>
         <BottomNav />

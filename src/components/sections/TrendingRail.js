@@ -1,9 +1,15 @@
+import Link from "next/link";
 import Card from "../ui/Card";
 
 export default function TrendingRail({ items = [] }) {
   return (
     <section className="mt-6">
-      <h2 className="text-lg font-semibold">Sedang Tren</h2>
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-lg font-semibold">Sedang Tren</h2>
+        <Link href="/anime" className="text-sm text-primary hover:underline">
+          Lihat Semua
+        </Link>
+      </div>
       <div className="mt-3 -mx-4 overflow-x-auto px-4">
         <div className="flex gap-3">
           {items.map((item, idx) => (

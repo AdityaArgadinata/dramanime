@@ -24,9 +24,15 @@ export default function Card({ title, subtitle, cover, slug, episode, children, 
   const cardClasses = `group overflow-hidden rounded-[var(--radius-lg)] bg-[var(--surface)] shadow-sm ios-ring ${className}`;
 
   if (slug) {
-    // If has episode info or slug contains episode pattern, link to watch page
-    const isEpisode = episode || slug.includes('-episode-') || slug.match(/-ep-?\d+/i);
-    const href = isEpisode ? `/watch/${slug}` : `/${slug}`;
+    // Route to watch page only when slug clearly indicates an episode
+    const isEpisode = slug.includes('-episode-') || slug.match(/-ep-?\d+/i);
+
+    // For non-episode slugs, strip leading "anime" prefix (e.g., animeseireig -> seireig)
+    const normalizedSlug = !isEpisode
+      ? slug.replace(/^anime-?/, "")
+      : slug;
+
+    const href = isEpisode ? `/watch/${slug}` : `/${normalizedSlug}`;
     
     return (
       <Link href={href} className={cardClasses}>
