@@ -16,11 +16,11 @@ export default function Button({
 
   const variants = {
     primary:
-      "bg-[var(--primary)] text-white hover:bg-[#0a74e6] dark:hover:bg-[#1a8cff]",
+      "bg-primary text-white hover:bg-[#0a74e6] dark:hover:bg-[#1a8cff]",
     outline:
-      "bg-transparent text-[var(--foreground)] ios-ring hover:bg-black/5 dark:hover:bg-white/5",
+      "bg-transparent text-foreground ios-ring hover:bg-black/5 dark:hover:bg-white/5",
     ghost:
-      "bg-transparent text-[var(--foreground)] hover:bg-black/5 dark:hover:bg-white/5",
+      "bg-transparent text-foreground hover:bg-black/5 dark:hover:bg-white/5",
   };
 
   return (

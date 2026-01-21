@@ -50,7 +50,7 @@ export default function EpisodeList({
             href={`/watch/drama/${dramaId}/${ep.chapter_id}`}
             className={`ios-surface ios-ring overflow-hidden rounded-lg transition-opacity hover:opacity-80 ${
               ep.chapter_id === currentChapterId
-                ? "ring-2 ring-[var(--primary)]"
+                ? "ring-2 ring-primary"
                 : ""
             }`}
           >

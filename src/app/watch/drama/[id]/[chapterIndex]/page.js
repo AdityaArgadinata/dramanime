@@ -167,7 +167,7 @@ export default async function WatchPage({ params }) {
               {prevEpisode ? (
                 <Link
                   href={`/watch/drama/${id}/${prevEpisode.chapter_id}`}
-                  className="flex-1 ios-surface ios-ring px-4 py-2 text-center font-medium text-[var(--primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors rounded-full"
+                  className="flex-1 ios-surface ios-ring px-4 py-2 text-center font-medium text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-colors rounded-full"
                 >
                   ← {prevEpisode.chapter_name}
                 </Link>
@@ -180,7 +180,7 @@ export default async function WatchPage({ params }) {
               {nextEpisode ? (
                 <Link
                   href={`/watch/drama/${id}/${nextEpisode.chapter_id}`}
-                  className="flex-1 ios-surface ios-ring px-4 py-2 text-center font-medium text-[var(--primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors rounded-full"
+                  className="flex-1 ios-surface ios-ring px-4 py-2 text-center font-medium text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-colors rounded-full"
                 >
                   {nextEpisode.chapter_name} →
                 </Link>
