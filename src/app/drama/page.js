@@ -5,9 +5,9 @@ import TrendingRail from "../../components/sections/TrendingRail";
 import Categories from "../../components/sections/Categories";
 import { FeaturedSkeleton, TrendingSkeleton } from "../../components/sections/HomeSkeleton";
 
-async function getAnimeData() {
+async function getDramaData() {
   try {
-    const res = await fetch("https://dramabos.asia/api/tensei/anime?page=1&order=update", {
+    const res = await fetch("https://dramabos.asia/api/meloshort/api/home?page=1&page_size=20", {
       headers: {
         accept: "application/json",
       },
@@ -17,40 +17,49 @@ async function getAnimeData() {
     const json = await res.json();
     const data = Array.isArray(json?.data) ? json.data : [];
     
-    // Deduplicate by slug
+    // Normalize drama data to match anime structure and deduplicate
     const seen = new Set();
-    const unique = data.filter((item) => {
-      const key = item.slug || item.title;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+    const normalized = [];
     
-    return unique;
+    for (const item of data) {
+      const id = item?.drama_id || item?.id;
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      
+      normalized.push({
+        slug: id,
+        title: item?.drama_title || item?.name || "Drama",
+        img: item?.drama_cover || item?.cover,
+        type: "Drama",
+        status: item?.chapters ? `${item.chapters} Episode` : "Series",
+      });
+    }
+    
+    return normalized;
   } catch (e) {
     return [];
   }
 }
 
-async function AnimeContent() {
-  const items = await getAnimeData();
+async function DramaContent() {
+  const items = await getDramaData();
   const featured = items.slice(0, 6);
   const trending = items.slice(6, 18);
 
   return (
     <>
-      <FeaturedGrid items={featured} contextPath="/anime" />
-      <TrendingRail items={trending} contextPath="/anime" />
+      <FeaturedGrid items={featured} contextPath="/drama" />
+      <TrendingRail items={trending} contextPath="/drama" />
     </>
   );
 }
 
 export const metadata = {
-  title: "Anime - Dramanime",
-  description: "Jelajahi koleksi lengkap anime dengan subtitle Indonesia",
+  title: "Drama - Dramanime",
+  description: "Jelajahi koleksi lengkap drama dengan subtitle Indonesia",
 };
 
-export default function AnimePage() {
+export default function DramaPage() {
   return (
     <div className="py-4">
       <Hero />
@@ -60,7 +69,7 @@ export default function AnimePage() {
           <TrendingSkeleton />
         </>
       }>
-        <AnimeContent />
+        <DramaContent />
       </Suspense>
       <Categories />
     </div>

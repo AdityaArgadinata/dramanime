@@ -1,7 +1,24 @@
-import Button from "../ui/Button";
+"use client";
+
+import { useRouter, usePathname } from "next/navigation";
 import Tabs from "../ui/Tabs";
 
 export default function Hero() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Determine active tab based on current path
+  const getActiveTab = () => {
+    if (pathname === "/anime") return 2;
+    if (pathname === "/drama") return 1;
+    return 0; // home
+  };
+
+  const handleTabChange = (index) => {
+    const routes = ["/", "/drama", "/anime"];
+    router.push(routes[index]);
+  };
+
   return (
     <section className="mt-4">
       <div className="ios-surface ios-ring overflow-hidden">
@@ -16,6 +33,8 @@ export default function Hero() {
                 { label: "Drama", value: "drama" },
                 { label: "Anime", value: "anime" },
               ]}
+              initial={getActiveTab()}
+              onChange={handleTabChange}
             />
           </div>
         </div>

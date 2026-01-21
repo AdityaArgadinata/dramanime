@@ -35,8 +35,8 @@ export default async function HomeContent() {
 
   return (
     <>
-      <FeaturedGrid items={featured} />
-      <TrendingRail items={trending} />
+      <FeaturedGrid items={featured} contextPath="/" />
+      <TrendingRail items={trending} contextPath="/" />
     </>
   );
 }

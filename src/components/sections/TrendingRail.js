@@ -1,12 +1,14 @@
 import Link from "next/link";
 import Card from "../ui/Card";
 
-export default function TrendingRail({ items = [] }) {
+export default function TrendingRail({ items = [], contextPath = "/anime" }) {
+  const listPath = contextPath === "/" ? "/anime/list" : `${contextPath}/list`;
+  
   return (
     <section className="mt-6">
       <div className="flex items-baseline justify-between">
         <h2 className="text-lg font-semibold">Sedang Tren</h2>
-        <Link href="/anime" className="text-sm text-primary hover:underline">
+        <Link href={listPath} className="text-sm text-primary hover:underline">
           Lihat Semua
         </Link>
       </div>

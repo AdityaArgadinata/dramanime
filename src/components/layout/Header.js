@@ -19,15 +19,17 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 safe-top bg-background/95 backdrop-blur-md border-b border-black/5 dark:border-white/5">
+    <header className="fixed top-0 inset-x-0 z-50 safe-top">
       <div className="mx-auto max-w-3xl px-4 py-3">
-        <div className="flex items-center gap-3">
+        <div className="backdrop-blur-xl bg-surface/80 border border-white/10 rounded-2xl px-4 py-2.5 flex items-center gap-3">
           <button
             onClick={() => router.push("/")}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
           >
-            <div className="h-6 w-6 rounded-lg bg-black/90 dark:bg-white" />
-            <span className="text-base font-semibold">Stream</span>
+            <div className="h-8 w-8 rounded-lg bg-linear-to-br from-primary to-blue-600 flex items-center justify-center">
+              <span className="text-white font-bold text-lg">D</span>
+            </div>
+            <span className="text-base font-semibold">dramanime</span>
           </button>
           <form onSubmit={handleSearch} className="ml-auto w-full max-w-xs">
             <Input
