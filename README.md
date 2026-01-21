@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Streaming Project UI Scaffold
 
-## Getting Started
+A clean iOS-style Next.js layout and component scaffold (inspired by shadcn/ui patterns) for drama & anime streaming. API integration can be added later.
 
-First, run the development server:
+## Structure
+
+- `src/components/ui`
+	- `Button.js`: Primary/outline/ghost button variants
+	- `Input.js`: Search and form input
+	- `Card.js`: Media card with cover/title/meta
+	- `Tabs.js`: Segmented control style tabs
+	- `Badge.js`: Pill labels
+	- `Skeleton.js`: Loading placeholder
+- `src/components/layout`
+	- `Header.js`: Sticky top bar with search
+	- `BottomNav.js`: Fixed tab bar (mobile-first)
+	- `Container.js`: Centered max-width wrapper
+- `src/components/sections`
+	- `Hero.js`: Intro block with CTA and tabs
+	- `FeaturedGrid.js`: Grid of featured items
+	- `TrendingRail.js`: Horizontal scroll list
+	- `Categories.js`: Category badges
+- `src/lib/placeholder.js`: Sample data until API arrives
+
+## Styling
+
+- Tailwind v4 via `@tailwindcss/postcss`.
+- iOS tokens and helpers in `src/app/globals.css` (`--primary`, radii, shadows).
+- System font stack using `-apple-system` for Apple-like typographic feel.
+
+## Run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 to view the scaffold.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Next Steps
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Replace `src/lib/placeholder.js` with your API responses.
+- Add pages for detail and player; wire routing.
+- Introduce server actions or client fetching based on your API.

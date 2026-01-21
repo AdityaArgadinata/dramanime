@@ -1,13 +1,27 @@
 @import "tailwindcss";
 
 :root {
+  /* iOS-inspired palette */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0a0a0a;
+  --surface: #ffffff;
+  --surface-muted: #f5f5f7;
+  --primary: #0a84ff; /* iOS Blue */
+  --secondary: #ff9f0a; /* iOS Orange */
+  --muted: #6b7280;
+
+  /* radii + shadow tokens */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --shadow-soft: 0 1px 2px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-muted: var(--muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,11 +30,78 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --surface: #121212;
+    --surface-muted: #0f0f10;
+    --muted: #9ca3af;
+    --shadow-soft: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.2);
   }
+}
+
+/* Base typography + antialiasing */
+html, body {
+  height: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* iOS-style surface helpers */
+.ios-surface {
+  background-color: var(--surface);
+  backdrop-filter: saturate(180%) blur(16px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.ios-segmented {
+  background-color: var(--surface-muted);
+  border-radius: var(--radius-md);
+}
+
+.ios-ring {
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Shimmer effect for skeleton */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer-effect {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+  .shimmer-effect {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+  }
 }
