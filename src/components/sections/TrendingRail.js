@@ -21,6 +21,7 @@ export default function TrendingRail({ items = [], contextPath = "/anime" }) {
                 subtitle={[item.episode, item.status].filter(Boolean).join(" ") || undefined}
                 cover={item.img ?? null}
                 slug={item.slug}
+                type={item.type}
                 episode={item.episode}
               />
             </div>

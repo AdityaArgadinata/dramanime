@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function Card({ title, subtitle, cover, slug, episode, children, className = "" }) {
+export default function Card({ title, subtitle, cover, slug, type, episode, children, className = "" }) {
   const content = (
     <>
       <div className="relative aspect-3/4 w-full overflow-hidden">
@@ -24,16 +24,21 @@ export default function Card({ title, subtitle, cover, slug, episode, children, 
   const cardClasses = `group overflow-hidden rounded-[var(--radius-lg)] bg-[var(--surface)] shadow-sm ios-ring ${className}`;
 
   if (slug) {
-    // Route to watch page only when slug clearly indicates an episode
-    const isEpisode = slug.includes('-episode-') || slug.match(/-ep-?\d+/i);
+    const isEpisode = slug.includes("-episode-") || slug.match(/-ep-?\d+/i);
+    const isDramaSlug = slug.startsWith("drama/");
+    const isDramaId = /^[0-9a-f]{24}$/i.test(slug);
+    const isDrama = type === "Drama" || isDramaSlug || isDramaId;
 
-    // For non-episode slugs, strip leading "anime" prefix (e.g., animeseireig -> seireig)
     const normalizedSlug = !isEpisode
       ? slug.replace(/^anime-?/, "")
       : slug;
 
-    const href = isEpisode ? `/watch/${slug}` : `/${normalizedSlug}`;
-    
+    const href = isEpisode
+      ? `/watch/${slug}`
+      : isDrama
+        ? `/${isDramaSlug ? normalizedSlug : `drama/${normalizedSlug}`}`
+        : `/${normalizedSlug}`;
+
     return (
       <Link href={href} className={cardClasses}>
         {content}

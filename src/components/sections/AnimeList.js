@@ -100,6 +100,7 @@ export default function AnimeList() {
             subtitle={`${anime.type} • ${anime.status}`}
             cover={anime.img}
             slug={anime.slug}
+            type={anime.type}
           />
         ))}
       </div>
