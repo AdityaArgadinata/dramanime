@@ -1,51 +1,49 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Button from "../ui/Button";
 import Skeleton from "../ui/Skeleton";
 
 const PAGE_SIZE = 20;
 
 export default function DramaList() {
   const [dramaList, setDramaList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const observerTarget = useRef(null);
+  const [hasPrev, setHasPrev] = useState(false);
 
-  const normalizeAndMerge = useCallback((incoming, replace = false) => {
-    setDramaList((prev) => {
-      const base = replace ? [] : prev;
-      const seen = new Set(base.map((item) => item.id));
-      const merged = [...base];
+  const normalizeData = useCallback((incoming) => {
+    const normalized = [];
+    const seen = new Set();
 
-      for (const item of incoming) {
-        const id = item?.drama_id || item?.id;
-        if (!id || seen.has(id)) continue;
-        seen.add(id);
+    for (const item of incoming) {
+      const id = item?.drama_id || item?.id;
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
 
-        merged.push({
-          id,
-          title: item?.drama_title || item?.name || "Drama",
-          cover: item?.drama_cover || item?.cover,
-          episodes:
-            item?.chapters ??
-            item?.charge_chapters ??
-            item?.total_eps ??
-            item?.episodes,
-        });
-      }
+      normalized.push({
+        id,
+        title: item?.drama_title || item?.name || "Drama",
+        cover: item?.drama_cover || item?.cover,
+        episodes:
+          item?.chapters ??
+          item?.charge_chapters ??
+          item?.total_eps ??
+          item?.episodes,
+      });
+    }
 
-      return merged;
-    });
+    return normalized;
   }, []);
 
   const fetchPage = useCallback(
-    async (pageNum, { replace = false, initial = false } = {}) => {
-      if (initial) setLoading(true);
-      else setLoadingMore(true);
+    async (pageNum) => {
+      setLoading(true);
+      setError(null);
 
       try {
         const res = await fetch(
@@ -56,48 +54,53 @@ export default function DramaList() {
         const json = await res.json();
         const newData = json?.data || [];
 
-        normalizeAndMerge(newData, replace);
+        const normalized = normalizeData(newData);
+        setDramaList(normalized);
         setHasMore(newData.length === PAGE_SIZE);
+        setHasPrev(pageNum > 1);
         setPage(pageNum);
       } catch (err) {
         console.error(err);
         setError("Gagal memuat data drama");
         setHasMore(false);
       } finally {
-        if (initial) setLoading(false);
-        else setLoadingMore(false);
+        setLoading(false);
+        setIsInitialLoad(false);
       }
     },
-    [normalizeAndMerge]
+    [normalizeData]
   );
 
   useEffect(() => {
-    fetchPage(1, { replace: true, initial: true });
+    fetchPage(1);
   }, [fetchPage]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading && !loadingMore) {
-          fetchPage(page + 1, { replace: false });
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const currentTarget = observerTarget.current;
-    if (currentTarget) {
-      observer.observe(currentTarget);
+  const scrollToTop = () => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  };
 
-    return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget);
-      }
-    };
-  }, [hasMore, loading, loadingMore, page, fetchPage]);
+  const handleNext = () => {
+    setPage((prev) => {
+      const next = prev + 1;
+      fetchPage(next);
+      requestAnimationFrame(scrollToTop);
+      return next;
+    });
+  };
 
-  if (loading) {
+  const handlePrev = () => {
+    setPage((prev) => {
+      if (prev <= 1) return prev;
+      const next = prev - 1;
+      fetchPage(next);
+      requestAnimationFrame(scrollToTop);
+      return next;
+    });
+  };
+
+  if (isInitialLoad && loading) {
     return (
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
         {Array.from({ length: 12 }).map((_, idx) => (
@@ -123,7 +126,7 @@ export default function DramaList() {
     );
   }
 
-  if (dramaList.length === 0) {
+  if (!loading && dramaList.length === 0) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center text-center">
         <div>
@@ -135,39 +138,10 @@ export default function DramaList() {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-        {dramaList.map((drama) => (
-          <Link
-            key={drama.id}
-            href={`/drama/${drama.id}`}
-            className="group overflow-hidden rounded-lg bg-surface shadow-sm ios-ring"
-          >
-            <div className="relative aspect-3/4 w-full overflow-hidden">
-              {drama.cover ? (
-                <img
-                  src={drama.cover}
-                  alt={drama.title}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="h-full w-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-700" />
-              )}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/10" />
-            </div>
-            <div className="p-3">
-              <div className="text-foreground text-sm font-semibold truncate">{drama.title}</div>
-              <div className="text-muted text-xs mt-1 truncate">
-                {drama.episodes ? `${drama.episodes} Episode` : "Episode tersedia"}
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      {/* Loading indicator */}
-      {loadingMore && (
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, idx) => (
+      {/* Loading skeleton or content */}
+      {loading ? (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          {Array.from({ length: 12 }).map((_, idx) => (
             <div key={idx} className="overflow-hidden rounded-lg">
               <Skeleton className="aspect-3/4 w-full" />
               <div className="p-3">
@@ -177,17 +151,63 @@ export default function DramaList() {
             </div>
           ))}
         </div>
-      )}
-
-      {/* Intersection observer target */}
-      {hasMore && <div ref={observerTarget} className="h-10" />}
-
-      {/* End of list message */}
-      {!hasMore && !loading && dramaList.length > 0 && (
-        <div className="mt-8 text-center">
-          <p className="text-sm text-muted">Semua drama telah ditampilkan</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          {dramaList.map((drama) => (
+            <Link
+              key={drama.id}
+              href={`/drama/${drama.id}`}
+              className="group overflow-hidden rounded-lg bg-surface shadow-sm ios-ring"
+            >
+              <div className="relative aspect-3/4 w-full overflow-hidden">
+                {drama.cover ? (
+                  <img
+                    src={drama.cover}
+                    alt={drama.title}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-700" />
+                )}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/10" />
+              </div>
+              <div className="p-3">
+                <div className="text-foreground text-sm font-semibold truncate">{drama.title}</div>
+                <div className="text-muted text-xs mt-1 truncate">
+                  {drama.episodes ? `${drama.episodes} Episode` : "Episode tersedia"}
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       )}
+
+      {/* Pagination Controls */}
+      <div className="mt-6 sm:mt-8 flex w-full max-w-xl flex-col items-center gap-3 sm:gap-4">
+        <div className="text-xs sm:text-sm text-muted text-center">
+          Halaman <span className="font-semibold text-foreground">{page}</span>
+        </div>
+        <div className="flex w-full items-center justify-between gap-3 sm:gap-4">
+          <Button
+            onClick={handlePrev}
+            disabled={!hasPrev || loading}
+            variant="primary"
+            size="sm"
+            className="w-full sm:w-auto rounded-md"
+          >
+            ← Sebelumnya
+          </Button>
+          <Button
+            onClick={handleNext}
+            disabled={!hasMore || loading}
+            variant="primary"
+            size="sm"
+            className="w-full sm:w-auto rounded-md"
+          >
+            Berikutnya →
+          </Button>
+        </div>
+      </div>
     </>
   );
 }

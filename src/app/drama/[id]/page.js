@@ -2,6 +2,7 @@ import Container from "../../../components/layout/Container";
 import Badge from "../../../components/ui/Badge";
 import Button from "../../../components/ui/Button";
 import Link from "next/link";
+import EpisodeList from "../../../components/sections/EpisodeList";
 
 async function getDramaInfo(id) {
   try {
@@ -161,34 +162,11 @@ export default async function DramaDetailPage({ params }) {
 
         {/* Episodes list */}
         {episodes && episodes.length > 0 && (
-          <div className="mt-6">
-            <h2 className="mb-3 text-lg font-semibold">Episode ({episodes.length})</h2>
-            <div className="space-y-2">
-              {episodes.map((ep) => (
-                <Link
-                  key={ep.chapter_id}
-                  href={`/watch/drama/${id}/${ep.chapter_id}`}
-                  className="ios-surface ios-ring flex items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                >
-                  <div className="flex-1">
-                    <div className="font-medium">{ep.chapter_name}</div>
-                    <div className="mt-1 text-sm text-muted">
-                      {ep.is_free ? "Gratis" : `${ep.chapter_price} Koin`}
-                    </div>
-                  </div>
-                  {ep.first_frame && (
-                    <div className="ml-4 w-24 shrink-0 overflow-hidden rounded">
-                      <img
-                        src={ep.first_frame}
-                        alt={ep.chapter_name}
-                        className="h-auto w-full object-cover"
-                      />
-                    </div>
-                  )}
-                </Link>
-              ))}
-            </div>
-          </div>
+          <EpisodeList
+            dramaId={id}
+            currentChapterId={null}
+            allEpisodes={episodes}
+          />
         )}
 
         {episodes.length === 0 && (

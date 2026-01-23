@@ -5,7 +5,13 @@ export default function Card({ title, subtitle, cover, slug, type, episode, chil
     <>
       <div className="relative aspect-3/4 w-full overflow-hidden">
         {cover ? (
-          <img src={cover} alt={title} className="h-full w-full object-cover" />
+          <img 
+            src={cover} 
+            alt={title} 
+            className="h-full w-full object-cover" 
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <div className="h-full w-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-700" />
         )}

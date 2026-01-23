@@ -89,7 +89,7 @@ export default async function SearchResults({ query }) {
       <div className="flex min-h-[40vh] items-center justify-center text-center">
         <div>
           <p className="text-muted">
-            Gunakan kolom pencarian di atas untuk mencari anime atau drama
+            Gunakan kolom pencarian di atas untuk mencari anime dan drama
           </p>
         </div>
       </div>
@@ -110,17 +110,23 @@ export default async function SearchResults({ query }) {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-      {results.map((item, idx) => (
-        <Card
-          key={`${item.slug ?? item.title}-${idx}`}
-          title={item.title}
-          subtitle={[item.type, item.status].filter(Boolean).join(" · ") || undefined}
-          cover={item.img ?? null}
-          slug={item.slug}
-          type={item.type}
-        />
-      ))}
-    </div>
+    <>
+      <div className="mb-4 text-sm text-muted">
+        Ditemukan {results.length} hasil untuk &quot;{query}&quot;
+      </div>
+      
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        {results.map((item, idx) => (
+          <Card
+            key={`${item.slug ?? item.title}-${idx}`}
+            title={item.title}
+            subtitle={[item.type, item.status].filter(Boolean).join(" · ") || undefined}
+            cover={item.img ?? null}
+            slug={item.slug}
+            type={item.type}
+          />
+        ))}
+      </div>
+    </>
   );
 }

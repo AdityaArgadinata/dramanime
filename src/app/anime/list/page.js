@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Container from "../../../components/layout/Container";
+import ListTabs from "../../../components/layout/ListTabs";
 import AnimeList from "../../../components/sections/AnimeList";
 import Skeleton from "../../../components/ui/Skeleton";
 
@@ -34,6 +35,8 @@ export default function AnimeListPage() {
             Koleksi lengkap anime dengan subtitle Indonesia
           </p>
         </div>
+
+        <ListTabs />
 
         <Suspense fallback={<AnimeListSkeleton />}>
           <AnimeList />

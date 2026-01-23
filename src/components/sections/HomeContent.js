@@ -7,7 +7,11 @@ async function getHome() {
       headers: {
         accept: "application/json",
       },
-      next: { revalidate: 120 },
+      next: { 
+        revalidate: 300, // 5 minutes cache
+        tags: ['anime-home']
+      },
+      cache: 'force-cache',
     });
     if (!res.ok) return [];
     const json = await res.json();
@@ -24,12 +28,14 @@ async function getHome() {
     
     return unique;
   } catch (e) {
+    console.error('getHome error:', e);
     return [];
   }
 }
 
 export default async function HomeContent() {
   const items = await getHome();
+
   const featured = items.slice(0, 6);
   const trending = items.slice(6, 18);
 

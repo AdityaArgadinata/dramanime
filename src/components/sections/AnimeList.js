@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Card from "../ui/Card";
+import Button from "../ui/Button";
 import Skeleton from "../ui/Skeleton";
 
 export default function AnimeList() {
@@ -9,7 +10,7 @@ export default function AnimeList() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const observerTarget = useRef(null);
+  const [hasPrev, setHasPrev] = useState(false);
 
   // Deduplicate function
   const deduplicateAnime = (items) => {
@@ -22,8 +23,6 @@ export default function AnimeList() {
   };
 
   const fetchAnime = useCallback(async (pageNum) => {
-    if (loading) return;
-    
     setLoading(true);
     try {
       const res = await fetch(
@@ -35,6 +34,7 @@ export default function AnimeList() {
 
       if (!res.ok) {
         setHasMore(false);
+        setLoading(false);
         return;
       }
 
@@ -43,72 +43,83 @@ export default function AnimeList() {
 
       if (newData.length === 0) {
         setHasMore(false);
-        return;
+      } else {
+        setHasMore(true);
       }
 
-      setAnimeList((prev) => {
-        const combined = [...prev, ...newData];
-        return deduplicateAnime(combined);
-      });
+      const dedupData = deduplicateAnime(newData);
+      setAnimeList(dedupData);
+      setHasPrev(pageNum > 1);
     } catch (error) {
       console.error("Failed to fetch anime:", error);
       setHasMore(false);
     } finally {
       setLoading(false);
     }
-  }, [loading]);
+  }, []);
 
   // Initial load
   useEffect(() => {
     fetchAnime(1);
-  }, []);
+  }, [fetchAnime]);
 
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
-          setPage((prev) => {
-            const nextPage = prev + 1;
-            fetchAnime(nextPage);
-            return nextPage;
-          });
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const currentTarget = observerTarget.current;
-    if (currentTarget) {
-      observer.observe(currentTarget);
+  const scrollToTop = () => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  };
 
-    return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget);
-      }
-    };
-  }, [hasMore, loading, fetchAnime]);
+  const handleNext = () => {
+    setPage((prev) => {
+      const next = prev + 1;
+      fetchAnime(next);
+      requestAnimationFrame(scrollToTop);
+      return next;
+    });
+  };
+
+  const handlePrev = () => {
+    setPage((prev) => {
+      if (prev <= 1) return prev;
+      const next = prev - 1;
+      fetchAnime(next);
+      requestAnimationFrame(scrollToTop);
+      return next;
+    });
+  };
+
+  if (loading && animeList.length === 0) {
+    return (
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+        {Array.from({ length: 12 }).map((_, idx) => (
+          <div key={idx} className="overflow-hidden rounded-lg">
+            <Skeleton className="aspect-3/4 w-full" />
+            <div className="p-3">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="mt-2 h-3 w-2/3" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (animeList.length === 0) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-center">
+        <div>
+          <p className="text-muted">Tidak ada anime tersedia</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-        {animeList.map((anime) => (
-          <Card
-            key={anime.slug}
-            title={anime.title}
-            subtitle={`${anime.type} • ${anime.status}`}
-            cover={anime.img}
-            slug={anime.slug}
-            type={anime.type}
-          />
-        ))}
-      </div>
-
-      {/* Loading indicator */}
-      {loading && (
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, idx) => (
+      {/* Loading skeleton or content */}
+      {loading ? (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          {Array.from({ length: 12 }).map((_, idx) => (
             <div key={idx} className="overflow-hidden rounded-lg">
               <Skeleton className="aspect-3/4 w-full" />
               <div className="p-3">
@@ -118,26 +129,47 @@ export default function AnimeList() {
             </div>
           ))}
         </div>
-      )}
-
-      {/* Intersection observer target */}
-      {hasMore && <div ref={observerTarget} className="h-10" />}
-
-      {/* End of list message */}
-      {!hasMore && !loading && animeList.length > 0 && (
-        <div className="mt-8 text-center">
-          <p className="text-sm text-muted">Semua anime telah ditampilkan</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          {animeList.map((anime) => (
+            <Card
+              key={anime.slug}
+              title={anime.title}
+              subtitle={`${anime.type} • ${anime.status}`}
+              cover={anime.img}
+              slug={anime.slug}
+              type={anime.type}
+            />
+          ))}
         </div>
       )}
 
-      {/* Empty state */}
-      {!loading && animeList.length === 0 && (
-        <div className="flex min-h-[40vh] items-center justify-center text-center">
-          <div>
-            <p className="text-muted">Tidak ada anime tersedia</p>
-          </div>
+      {/* Pagination Controls */}
+      <div className="mt-6 sm:mt-8 flex w-full max-w-xl flex-col items-center gap-3 sm:gap-4">
+        <div className="text-xs sm:text-sm text-muted text-center">
+          Halaman <span className="font-semibold text-foreground">{page}</span>
         </div>
-      )}
+        <div className="flex w-full items-center justify-between gap-3 sm:gap-4">
+          <Button
+            onClick={handlePrev}
+            disabled={!hasPrev || loading}
+            variant="primary"
+            size="sm"
+            className="w-full sm:w-auto rounded-md"
+          >
+            ← Sebelumnya
+          </Button>
+          <Button
+            onClick={handleNext}
+            disabled={!hasMore || loading}
+            variant="primary"
+            size="sm"
+            className="w-full sm:w-auto rounded-md"
+          >
+            Berikutnya →
+          </Button>
+        </div>
+      </div>
     </>
   );
 }

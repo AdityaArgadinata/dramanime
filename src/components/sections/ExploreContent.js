@@ -1,0 +1,168 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Skeleton from "../ui/Skeleton";
+
+export default function ExploreContent() {
+  const [content, setContent] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState("all");
+
+  const categories = [
+    { id: "all", label: "Semua" },
+    { id: "anime", label: "Anime" },
+    { id: "drama", label: "Drama" },
+  ];
+
+  useEffect(() => {
+    fetchContent();
+  }, [activeCategory]);
+
+  const fetchContent = async () => {
+    setLoading(true);
+    try {
+      const results = [];
+
+      if (activeCategory === "all" || activeCategory === "anime") {
+        try {
+          const res = await fetch(
+            `https://dramabos.asia/api/tensei/home?page=1`,
+            { headers: { accept: "application/json" } }
+          );
+          if (res.ok) {
+            const json = await res.json();
+            const anime = (json?.data || []).slice(0, 10).map((item) => ({
+              id: item.slug,
+              title: item.title,
+              cover: item.img,
+              type: "anime",
+              episode: item.episode,
+            }));
+            results.push(...anime);
+          }
+        } catch (e) {
+          console.error("Anime fetch error:", e);
+        }
+      }
+
+      if (activeCategory === "all" || activeCategory === "drama") {
+        try {
+          const res = await fetch(
+            `https://dramabos.asia/api/meloshort/api/home?page=1&page_size=10`,
+            { headers: { accept: "application/json" } }
+          );
+          if (res.ok) {
+            const json = await res.json();
+            const drama = (json?.data || []).slice(0, 10).map((item) => ({
+              id: item.drama_id,
+              title: item.drama_title,
+              cover: item.drama_cover,
+              type: "drama",
+            }));
+            results.push(...drama);
+          }
+        } catch (e) {
+          console.error("Drama fetch error:", e);
+        }
+      }
+
+      setContent(results);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getLink = (item) => {
+    if (item.type === "anime") return `/anime/${item.id}`;
+    if (item.type === "drama") return `/drama/${item.id}`;
+    return "/";
+  };
+
+  const renderSkeleton = () => (
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      {Array.from({ length: 20 }).map((_, idx) => (
+        <div key={idx} className="overflow-hidden rounded-lg">
+          <Skeleton className="aspect-2/3 w-full" />
+          <div className="p-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="mt-2 h-3 w-2/3" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <>
+      {/* Category Filter */}
+      <div className="mb-8 flex gap-3 overflow-x-auto pb-2">
+        {categories.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => setActiveCategory(cat.id)}
+            className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              activeCategory === cat.id
+                ? "bg-primary text-primary-foreground"
+                : "bg-black/10 text-foreground hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20"
+            }`}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content Grid */}
+      {loading ? (
+        renderSkeleton()
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {content.map((item) => (
+            <Link
+              key={`${item.type}-${item.id}`}
+              href={getLink(item)}
+              className="group overflow-hidden rounded-lg"
+            >
+              <div className="relative w-full bg-black overflow-hidden rounded-lg">
+                {item.cover && (
+                  <img
+                    src={item.cover}
+                    alt={item.title}
+                    className="h-auto w-full object-cover aspect-2/3 transition-transform group-hover:scale-105"
+                  />
+                )}
+
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-end justify-end p-4">
+                  <div className="text-white text-sm font-semibold line-clamp-2 mb-2 w-full">
+                    {item.title}
+                  </div>
+                  <div className="flex gap-2 w-full">
+                    {item.rating && (
+                      <span className="text-xs bg-yellow-500 text-black px-2 py-1 rounded font-semibold">
+                        ⭐ {item.rating}
+                      </span>
+                    )}
+                    <span className="text-xs bg-white/20 text-white px-2 py-1 rounded">
+                      {item.type === "anime" ? "Anime" : "Drama"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {!loading && content.length === 0 && (
+        <div className="flex min-h-100 items-center justify-center text-center">
+          <div>
+            <p className="text-muted">Tidak ada konten tersedia</p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

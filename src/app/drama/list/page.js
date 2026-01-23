@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Container from "../../../components/layout/Container";
+import ListTabs from "../../../components/layout/ListTabs";
 import DramaList from "../../../components/sections/DramaList";
 import Skeleton from "../../../components/ui/Skeleton";
 
@@ -34,6 +35,8 @@ export default function DramaListPage() {
             Koleksi lengkap drama dengan subtitle Indonesia
           </p>
         </div>
+
+        <ListTabs />
 
         <Suspense fallback={<DramaListSkeleton />}>
           <DramaList />

@@ -21,7 +21,7 @@ export default function Header() {
   return (
     <header className="fixed top-0 inset-x-0 z-50 safe-top">
       <div className="mx-auto max-w-3xl px-4 py-3">
-        <div className="backdrop-blur-xl bg-surface/80 border border-white/10 rounded-2xl px-4 py-2.5 flex items-center gap-3">
+        <div className="bg-background border border-black/10 dark:border-white/10 rounded-2xl px-4 py-2.5 flex items-center gap-3 shadow-sm">
           <button
             onClick={() => router.push("/")}
             className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"

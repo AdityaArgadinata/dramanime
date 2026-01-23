@@ -1,15 +1,24 @@
+import Container from "../../components/layout/Container";
+import LibraryContent from "../../components/sections/LibraryContent";
+
 export const metadata = {
-  title: "Library",
-  description: "Koleksi drama dan anime favoritmu."
+  title: "Library - Koleksi Favorit & Watchlist",
+  description: "Kelola koleksi favorit dan watchlist anime dan drama kamu.",
 };
 
 export default function LibraryPage() {
   return (
-    <div className="py-6 space-y-3">
-      <h1 className="text-2xl font-semibold">Library</h1>
-      <p className="text-sm text-muted-foreground">
-        Simpan drama dan anime favoritmu di sini. Fitur ini akan segera hadir.
-      </p>
-    </div>
+    <Container>
+      <div className="py-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold">Library Saya</h1>
+          <p className="mt-1 text-sm text-muted">
+            Kelola favorit dan watchlist kamu
+          </p>
+        </div>
+
+        <LibraryContent />
+      </div>
+    </Container>
   );
 }

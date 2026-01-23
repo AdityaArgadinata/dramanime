@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 
 const items = [
   { key: "home", label: "Home", href: "/" },
-  { key: "explore", label: "Explore", href: "/search" },
   { key: "library", label: "Library", href: "/library" },
 ];
 
@@ -24,9 +23,9 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 safe-bottom bg-background/95 backdrop-blur-md border-t border-black/5 dark:border-white/5">
+    <nav className="fixed inset-x-0 bottom-0 z-40 safe-bottom bg-background border-t border-black/10 dark:border-white/10">
       <div className="mx-auto max-w-3xl px-4 pb-2 pt-2">
-        <div className="ios-surface ios-ring flex items-center justify-between px-2 py-2">
+        <div className="flex items-center justify-between px-2 py-2">
           {items.map((it) => {
             const active = isActive(it.href);
             return (
