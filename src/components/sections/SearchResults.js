@@ -69,13 +69,53 @@ async function searchDrama(query) {
   }
 }
 
+async function searchMovie(query) {
+  if (!query) return [];
+  try {
+    const res = await fetch(
+      `https://dramabos.asia/api/moviebox/v1/find?q=${encodeURIComponent(query)}`,
+      {
+        headers: {
+          accept: "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+    if (!res.ok) return [];
+    const json = await res.json();
+    const data = Array.isArray(json?.items) ? json.items : [];
+
+    const seen = new Set();
+    const normalized = [];
+
+    for (const item of data) {
+      const id = item?.subjectId;
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+
+      normalized.push({
+        slug: `${id}`,
+        title: item?.title || "Movie",
+        img: item?.cover?.url,
+        status: item?.imdbRatingValue ? `⭐ ${item.imdbRatingValue}` : undefined,
+        type: item?.subjectType === 2 ? "Series" : "Movie",
+      });
+    }
+
+    return normalized;
+  } catch (e) {
+    return [];
+  }
+}
+
 export default async function SearchResults({ query }) {
-  const [animeResults, dramaResults] = await Promise.all([
+  const [animeResults, dramaResults, movieResults] = await Promise.all([
     searchAnime(query),
     searchDrama(query),
+    searchMovie(query),
   ]);
 
-  const combined = [...animeResults, ...dramaResults];
+  const combined = [...animeResults, ...dramaResults, ...movieResults];
   const seen = new Set();
   const results = combined.filter((item) => {
     const key = item.slug || item.title;

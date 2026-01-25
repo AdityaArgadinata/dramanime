@@ -23,6 +23,7 @@ export default function FeaturedGrid({ items = [], contextPath = "/anime" }) {
             slug={item.slug}
             type={item.type}
             episode={item.episode}
+            contextPath={contextPath}
           />
         ))}
       </div>

@@ -147,7 +147,7 @@ export default function MovieList() {
         {movieList.map((movie) => (
           <Link
             key={movie.id}
-            href={`/movie/${movie.detailPath}?id=${movie.subjectId}`}
+            href={`/movie/${movie.subjectId}`}
             className="ios-surface ios-ring group overflow-hidden rounded-lg transition-opacity hover:opacity-80"
           >
             <div className="relative w-full bg-black">

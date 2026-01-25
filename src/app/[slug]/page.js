@@ -65,6 +65,11 @@ export async function generateMetadata({ params }) {
 
 export default async function DetailPage({ params }) {
   const { slug } = await params;
+
+  // If slug is numeric, it's a movie/series ID—redirect to /movie/[id]
+  if (/^\d+$/.test(slug)) {
+    redirect(`/movie/${slug}`);
+  }
   
   // Try original slug first
   let data = await getAnimeDetail(slug);

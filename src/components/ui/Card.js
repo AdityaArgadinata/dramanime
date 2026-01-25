@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function Card({ title, subtitle, cover, slug, type, episode, children, className = "" }) {
+export default function Card({ title, subtitle, cover, slug, type, episode, children, className = "", contextPath }) {
   const content = (
     <>
       <div className="relative aspect-3/4 w-full overflow-hidden">
@@ -34,16 +34,22 @@ export default function Card({ title, subtitle, cover, slug, type, episode, chil
     const isDramaSlug = slug.startsWith("drama/");
     const isDramaId = /^[0-9a-f]{24}$/i.test(slug);
     const isDrama = type === "Drama" || isDramaSlug || isDramaId;
+    const isMovie = type === "Movie" || contextPath === "/movie";
 
     const normalizedSlug = !isEpisode
       ? slug.replace(/^anime-?/, "")
       : slug;
 
-    const href = isEpisode
-      ? `/watch/${slug}`
-      : isDrama
-        ? `/${isDramaSlug ? normalizedSlug : `drama/${normalizedSlug}`}`
-        : `/${normalizedSlug}`;
+    let href;
+    if (isEpisode) {
+      href = `/watch/${slug}`;
+    } else if (isMovie) {
+      href = `/movie/${normalizedSlug}`;
+    } else if (isDrama) {
+      href = `/${isDramaSlug ? normalizedSlug : `drama/${normalizedSlug}`}`;
+    } else {
+      href = `/${normalizedSlug}`;
+    }
 
     return (
       <Link href={href} className={cardClasses}>

@@ -13,6 +13,7 @@ export default function ExploreContent() {
     { id: "all", label: "Semua" },
     { id: "anime", label: "Anime" },
     { id: "drama", label: "Drama" },
+    { id: "movie", label: "Movie" },
   ];
 
   useEffect(() => {
@@ -67,6 +68,28 @@ export default function ExploreContent() {
         }
       }
 
+      if (activeCategory === "all" || activeCategory === "movie") {
+        try {
+          const res = await fetch(
+            `https://dramabos.asia/api/moviebox/v1/popular?p=0`,
+            { headers: { accept: "application/json" } }
+          );
+          if (res.ok) {
+            const json = await res.json();
+            const movie = (json?.subjectList || []).slice(0, 10).map((item) => ({
+              id: item.subjectId,
+              title: item.title,
+              cover: item.cover?.url,
+              type: "movie",
+              rating: item.imdbRatingValue,
+            }));
+            results.push(...movie);
+          }
+        } catch (e) {
+          console.error("Movie fetch error:", e);
+        }
+      }
+
       setContent(results);
     } catch (error) {
       console.error("Fetch error:", error);
@@ -78,6 +101,7 @@ export default function ExploreContent() {
   const getLink = (item) => {
     if (item.type === "anime") return `/anime/${item.id}`;
     if (item.type === "drama") return `/drama/${item.id}`;
+    if (item.type === "movie") return `/movie/${item.id}`;
     return "/";
   };
 
@@ -146,7 +170,7 @@ export default function ExploreContent() {
                       </span>
                     )}
                     <span className="text-xs bg-white/20 text-white px-2 py-1 rounded">
-                      {item.type === "anime" ? "Anime" : "Drama"}
+                      {item.type === "anime" ? "Anime" : item.type === "drama" ? "Drama" : "Movie"}
                     </span>
                   </div>
                 </div>

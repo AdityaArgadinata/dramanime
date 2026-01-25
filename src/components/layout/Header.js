@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Input from "../ui/Input";
 
 export default function Header() {
@@ -26,9 +27,14 @@ export default function Header() {
             onClick={() => router.push("/")}
             className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
           >
-            <div className="h-8 w-8 rounded-lg bg-linear-to-br from-primary to-blue-600 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">D</span>
-            </div>
+            <Image 
+              src="/dramanimes.png" 
+              alt="dramanime" 
+              width={32} 
+              height={32}
+              className="rounded-lg" 
+              priority
+            />
             <span className="text-base font-semibold">dramanime</span>
           </button>
           <form onSubmit={handleSearch} className="ml-auto w-full max-w-xs">

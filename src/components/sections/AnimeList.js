@@ -145,7 +145,7 @@ export default function AnimeList() {
       )}
 
       {/* Pagination Controls */}
-      <div className="mt-6 sm:mt-8 flex w-full max-w-xl flex-col items-center gap-3 sm:gap-4">
+      <div className="mt-6 sm:mt-8 flex w-full max-w-xl flex-col items-center mx-auto gap-3 sm:gap-4">
         <div className="text-xs sm:text-sm text-muted text-center">
           Halaman <span className="font-semibold text-foreground">{page}</span>
         </div>

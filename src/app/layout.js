@@ -64,7 +64,7 @@ export const metadata = {
     images: ["/og-image.jpg"],
   },
   icons: {
-    icon: "/favicon.svg",
+    icon: "/dramanime.svg",
   },
   alternates: {
     canonical: "https://dramanime.com/",

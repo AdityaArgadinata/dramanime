@@ -9,6 +9,7 @@ export default function ListTabs() {
   const tabs = [
     { label: "Anime", href: "/anime/list" },
     { label: "Drama", href: "/drama/list" },
+    { label: "Movie", href: "/movie/list" },
   ];
 
   const isActive = (href) => pathname === href;

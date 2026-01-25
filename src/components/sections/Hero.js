@@ -11,11 +11,12 @@ export default function Hero() {
   const getActiveTab = () => {
     if (pathname === "/anime") return 2;
     if (pathname === "/drama") return 1;
+    if (pathname === "/movie") return 3;
     return 0; // home
   };
 
   const handleTabChange = (index) => {
-    const routes = ["/", "/drama", "/anime"];
+    const routes = ["/", "/drama", "/anime", "/movie"];
     router.push(routes[index]);
   };
 
@@ -32,6 +33,7 @@ export default function Hero() {
                 { label: "Semua", value: "all" },
                 { label: "Drama", value: "drama" },
                 { label: "Anime", value: "anime" },
+                { label: "Movie", value: "movie" },
               ]}
               initial={getActiveTab()}
               onChange={handleTabChange}
