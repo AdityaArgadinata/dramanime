@@ -29,21 +29,27 @@ export const metadata = {
   },
   applicationName: "dramanime",
   description:
-    "Streaming drama & anime dengan desain bersih ala iOS. Koleksi unggulan, tren, dan kategori lengkap.",
+    "Platform streaming terlengkap untuk nonton drama Korea, drama Mandarin, film, dan anime subtitle Indonesia. Nikmati koleksi serial terbaru, film populer, dan anime trending dengan kualitas HD.",
   keywords: [
-    "drama",
-    "anime",
-    "streaming",
-    "nonton",
-    "sub indo",
-    "series",
+    "nonton drama korea",
+    "streaming anime sub indo",
+    "drama mandarin subtitle indonesia",
+    "nonton film online",
+    "drama korea terbaru",
+    "anime subtitle indonesia",
+    "streaming drama gratis",
+    "kdrama sub indo",
+    "nonton anime",
+    "series korea",
+    "drakor terbaru",
+    "film bioskop online",
   ],
   openGraph: {
     type: "website",
     url: "https://dramanime.com/",
-    title: "dramanime",
+    title: "dramanime - Streaming Drama Korea, Anime & Film Sub Indo",
     description:
-      "Streaming drama & anime dengan desain bersih ala iOS.",
+      "Platform streaming terlengkap untuk nonton drama Korea, drama Mandarin, film, dan anime subtitle Indonesia. Koleksi serial terbaru dengan kualitas HD.",
     siteName: "dramanime",
     images: [
       {
@@ -58,9 +64,9 @@ export const metadata = {
     card: "summary_large_image",
     site: "@dramanime",
     creator: "@dramanime",
-    title: "dramanime",
+    title: "dramanime - Streaming Drama Korea, Anime & Film Sub Indo",
     description:
-      "Streaming drama & anime dengan desain bersih ala iOS.",
+      "Platform streaming terlengkap untuk nonton drama Korea, drama Mandarin, film, dan anime subtitle Indonesia. Koleksi serial terbaru dengan kualitas HD.",
     images: ["/og-image.jpg"],
   },
   icons: {
