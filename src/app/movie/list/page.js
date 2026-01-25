@@ -21,7 +21,7 @@ function MovieListSkeleton() {
 }
 
 export const metadata = {
-  title: "Semua Movie - Dramanime",
+  title: "Semua Movie - Xenaflix",
   description: "Jelajahi koleksi lengkap movie dengan subtitle Indonesia",
 };
 

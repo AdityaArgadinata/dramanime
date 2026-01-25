@@ -50,15 +50,15 @@ export default function ExploreContent() {
       if (activeCategory === "all" || activeCategory === "drama") {
         try {
           const res = await fetch(
-            `https://dramabos.asia/api/meloshort/api/home?page=1&page_size=10`,
+            `https://dramabos.asia/api/micro/api/v1/list?lang=id&page=1&limit=10`,
             { headers: { accept: "application/json" } }
           );
           if (res.ok) {
             const json = await res.json();
-            const drama = (json?.data || []).slice(0, 10).map((item) => ({
-              id: item.drama_id,
-              title: item.drama_title,
-              cover: item.drama_cover,
+            const drama = (json?.dassi?.lspee || []).slice(0, 10).map((item) => ({
+              id: item.dope,
+              title: item.ngrand,
+              cover: item.pcoa,
               type: "drama",
             }));
             results.push(...drama);

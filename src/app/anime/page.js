@@ -46,7 +46,7 @@ async function AnimeContent() {
 }
 
 export const metadata = {
-  title: "Anime - Dramanime",
+  title: "Anime - Xenaflix",
   description: "Jelajahi koleksi lengkap anime dengan subtitle Indonesia",
 };
 

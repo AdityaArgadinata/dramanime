@@ -21,7 +21,7 @@ function DramaListSkeleton() {
 }
 
 export const metadata = {
-  title: "Semua Drama - Dramanime",
+  title: "Semua Drama - Xenaflix",
   description: "Jelajahi koleksi lengkap drama dengan subtitle Indonesia",
 };
 

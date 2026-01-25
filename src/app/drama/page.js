@@ -7,7 +7,7 @@ import { FeaturedSkeleton, TrendingSkeleton } from "../../components/sections/Ho
 
 async function getDramaData() {
   try {
-    const res = await fetch("https://dramabos.asia/api/meloshort/api/home?page=1&page_size=20", {
+    const res = await fetch("https://dramabos.asia/api/micro/api/v1/list?lang=id&page=1&limit=20", {
       headers: {
         accept: "application/json",
       },
@@ -15,23 +15,23 @@ async function getDramaData() {
     });
     if (!res.ok) return [];
     const json = await res.json();
-    const data = Array.isArray(json?.data) ? json.data : [];
+    const data = Array.isArray(json?.dassi?.lspee) ? json.dassi.lspee : [];
     
     // Normalize drama data to match anime structure and deduplicate
     const seen = new Set();
     const normalized = [];
     
     for (const item of data) {
-      const id = item?.drama_id || item?.id;
+      const id = item?.dope;
       if (!id || seen.has(id)) continue;
       seen.add(id);
       
       normalized.push({
         slug: id,
-        title: item?.drama_title || item?.name || "Drama",
-        img: item?.drama_cover || item?.cover,
+        title: item?.ngrand || "Drama",
+        img: item?.pcoa,
         type: "Drama",
-        status: item?.chapters ? `${item.chapters} Episode` : "Series",
+        status: item?.eext ? `${item.eext} Episode` : "Series",
       });
     }
     
@@ -55,7 +55,7 @@ async function DramaContent() {
 }
 
 export const metadata = {
-  title: "Drama - Dramanime",
+  title: "Drama - Xenaflix",
   description: "Jelajahi koleksi lengkap drama dengan subtitle Indonesia",
 };
 

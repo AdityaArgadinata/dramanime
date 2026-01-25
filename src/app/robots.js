@@ -4,6 +4,6 @@ export default function robots() {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://dramanime.com/sitemap.xml",
+    sitemap: "https://xenaflix.com/sitemap.xml",
   };
 }

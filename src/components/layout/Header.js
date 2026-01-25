@@ -27,24 +27,24 @@ export default function Header() {
             onClick={() => router.push("/")}
             className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
           >
-            <Image 
-              src="/dramanimes.png" 
-              alt="dramanime" 
-              width={32} 
+            <Image
+              src="/dramanimes.png"
+              alt="xenaflix"
+              width={32}
               height={32}
-              className="rounded-lg" 
+              className="rounded-lg"
               priority
             />
-            <span className="text-base font-semibold">dramanime</span>
+            <span className="hidden md:inline text-base font-semibold">xenaflix</span>
           </button>
-          <form onSubmit={handleSearch} className="ml-auto w-full max-w-xs">
+          <form onSubmit={handleSearch} className="ml-auto w-full max-w-xs border border-black/10 dark:border-white/10 rounded-lg overflow-hidden shadow-sm">
             <Input
               type="search"
-              placeholder="Cari drama & anime"
+              placeholder="search..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               disabled={isPending}
-              className={isPending ? "opacity-50" : ""}
+              className={`${isPending ? "opacity-50" : ""} text-center`}
             />
           </form>
         </div>

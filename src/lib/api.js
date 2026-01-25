@@ -84,3 +84,42 @@ export function clearCacheEntry(url) {
     }
   }
 }
+
+// Search drama using micro API
+export async function searchDrama(query, limit = 20) {
+  if (!query) return [];
+  
+  try {
+    const url = `https://dramabos.asia/api/micro/api/v1/search?q=${encodeURIComponent(query)}&lang=id&limit=${limit}`;
+    const json = await fetchWithCache(url, {
+      headers: { accept: "application/json" },
+    });
+
+    const data = Array.isArray(json?.dassi?.lspee) ? json.dassi.lspee : [];
+    const seen = new Set();
+    const normalized = [];
+
+    for (const item of data) {
+      const id = item.dope;
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+
+      normalized.push({
+        id: id,
+        slug: `drama/${id}`,
+        title: item.ngrand || "Drama",
+        img: item.pcoa,
+        description: item.dfill,
+        episodes: item.eext,
+        tags: item.sheat || [],
+        status: item.eext ? `${item.eext} Episode` : undefined,
+        type: "Drama",
+      });
+    }
+
+    return normalized;
+  } catch (error) {
+    console.error('Search drama error:', error);
+    return [];
+  }
+}

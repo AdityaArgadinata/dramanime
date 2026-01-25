@@ -43,38 +43,16 @@ export default function EpisodeList({
   return (
     <div className="mt-8">
       <h2 className="mb-4 text-lg font-semibold">Semua Episode</h2>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
         {visibleEpisodes.map((ep) => (
           <Link
             key={ep.chapter_id}
             href={`/watch/drama/${dramaId}/${ep.chapter_id}`}
-            className={`ios-surface ios-ring overflow-hidden rounded-lg transition-opacity hover:opacity-80 ${
-              ep.chapter_id === currentChapterId
-                ? "ring-2 ring-primary"
-                : ""
+            className={`aspect-square flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-base font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground ${
+              ep.chapter_id === currentChapterId ? "border-primary bg-primary/10" : ""
             }`}
           >
-            <div className="relative w-full bg-black">
-              {ep.first_frame && (
-                <img
-                  src={ep.first_frame}
-                  alt={ep.chapter_name}
-                  className="h-auto w-full object-cover"
-                />
-              )}
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-white font-semibold">
-                    {ep.chapter_name}
-                  </div>
-                  {!ep.is_free && (
-                    <div className="text-xs text-orange-400 mt-1">
-                      {ep.chapter_price} Koin
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            {ep.chapter_name.replace(/Episode\s+/i, "")}
           </Link>
         ))}
       </div>

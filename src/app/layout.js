@@ -22,12 +22,12 @@ export const viewport = {
 };
 
 export const metadata = {
-  metadataBase: new URL("https://dramanime.com"),
+  metadataBase: new URL("https://xenaflix.com"),
   title: {
-    default: "dramanime",
-    template: "%s • dramanime",
+    default: "xenaflix",
+    template: "%s • xenaflix",
   },
-  applicationName: "dramanime",
+  applicationName: "xenaflix",
   description:
     "Platform streaming terlengkap untuk nonton drama Korea, drama Mandarin, film, dan anime subtitle Indonesia. Nikmati koleksi serial terbaru, film populer, dan anime trending dengan kualitas HD.",
   keywords: [
@@ -46,37 +46,37 @@ export const metadata = {
   ],
   openGraph: {
     type: "website",
-    url: "https://dramanime.com/",
-    title: "dramanime - Streaming Drama Korea, Anime & Film Sub Indo",
+    url: "https://xenaflix.com/",
+    title: "xenaflix - Streaming Drama Korea, Anime & Film Sub Indo",
     description:
       "Platform streaming terlengkap untuk nonton drama Korea, drama Mandarin, film, dan anime subtitle Indonesia. Koleksi serial terbaru dengan kualitas HD.",
-    siteName: "dramanime",
+    siteName: "xenaflix",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "dramanime hero",
+        alt: "xenaflix hero",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    site: "@dramanime",
-    creator: "@dramanime",
-    title: "dramanime - Streaming Drama Korea, Anime & Film Sub Indo",
+    site: "@xenaflix",
+    creator: "@xenaflix",
+    title: "xenaflix - Streaming Drama Korea, Anime & Film Sub Indo",
     description:
       "Platform streaming terlengkap untuk nonton drama Korea, drama Mandarin, film, dan anime subtitle Indonesia. Koleksi serial terbaru dengan kualitas HD.",
     images: ["/og-image.jpg"],
   },
   icons: {
-    icon: "/dramanime.svg",
+    icon: "/xenaflix.svg",
   },
   alternates: {
-    canonical: "https://dramanime.com/",
+    canonical: "https://xenaflix.com/",
     languages: {
-      "x-default": "https://dramanime.com/",
-      id: "https://dramanime.com/",
+      "x-default": "https://xenaflix.com/",
+      id: "https://xenaflix.com/",
     },
   },
   robots: {

@@ -194,20 +194,14 @@ export default async function DetailPage({ params }) {
         {data.episodes && data.episodes.length > 0 && (
           <div className="mt-6">
             <h2 className="mb-3 text-lg font-semibold">Episode</h2>
-            <div className="space-y-2">
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
               {data.episodes.map((ep) => (
                 <Link
                   key={ep.slug}
                   href={`/watch/${ep.slug}`}
-                  className="ios-surface ios-ring flex items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                  className="aspect-square flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-base font-semibold text-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground transition-colors"
                 >
-                  <div className="flex-1">
-                    <div className="font-medium">Episode {ep.ep}</div>
-                    <div className="mt-1 text-sm text-muted">
-                      {ep.date}
-                    </div>
-                  </div>
-                  <div className="text-sm text-primary">Tonton →</div>
+                  {ep.ep}
                 </Link>
               ))}
             </div>

@@ -3,58 +3,86 @@ import Badge from "../../../../../components/ui/Badge";
 import Link from "next/link";
 import EpisodeList from "../../../../../components/sections/EpisodeList";
 
-async function getDramaPlayData(dramaId, chapterId) {
+// Fetch drama detail (info + episodes + video URLs) from micro API
+async function getDramaDetail(dramaId) {
   try {
     const res = await fetch(
-      `https://dramabos.asia/api/meloshort/api/play/${dramaId}/${chapterId}`,
+      `https://dramabos.asia/api/micro/api/v1/drama/${dramaId}`,
       {
         headers: { accept: "application/json" },
-        next: { revalidate: 60 },
+        next: { revalidate: 120 },
       }
     );
     if (!res.ok) return null;
     const json = await res.json();
-    return json?.data || null;
-  } catch (e) {
-    console.error("Failed to fetch play data:", e);
-    return null;
-  }
-}
 
-async function getDramaEpisodes(dramaId) {
-  try {
-    const res = await fetch(
-      `https://dramabos.asia/api/meloshort/api/drama/${dramaId}`,
-      {
-        headers: { accept: "application/json" },
-        next: { revalidate: 300 },
-      }
-    );
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json?.data || [];
+    const drama = json?.dassi?.bsex;
+    const episodesRaw = json?.dassi?.erev || [];
+    if (!drama || episodesRaw.length === 0) return null;
+
+    const episodes = episodesRaw
+      .map((ep) => {
+        const video540p = ep.pjoint?.find((q) => q.Dpri === "540P");
+        const firstVideo = ep.pjoint?.[0];
+        const selectedVideo = video540p || firstVideo;
+        if (!selectedVideo?.Mknee) return null;
+
+        return {
+          chapter_id: ep.echa,
+          chapter_name: `Episode ${ep.echa}`,
+          first_frame: selectedVideo.Mknee.split("?")[0] || "",
+          is_free: true,
+          chapter_price: 0,
+          duration: selectedVideo.Dbonus || 0,
+          videoUrl: selectedVideo.Mknee,
+          qualities: ep.pjoint || [],
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => Number(a.chapter_id) - Number(b.chapter_id));
+
+    return {
+      drama: {
+        id: drama.dope,
+        title: drama.ngrand,
+        description: drama.dfill || "",
+        tags: drama.sheat || [],
+        cover: drama.pcoa,
+        chapters: drama.eext || episodes.length,
+      },
+      episodes,
+    };
   } catch (e) {
-    return [];
+    console.error("Failed to fetch drama detail:", e);
+    return null;
   }
 }
 
 export async function generateMetadata({ params }) {
   const { id, chapterIndex } = await params;
-  const data = await getDramaPlayData(id, chapterIndex);
-  if (!data) return { title: "Episode tidak ditemukan" };
+  const detail = await getDramaDetail(id);
+  if (!detail) return { title: "Episode tidak ditemukan" };
+
+  const target = detail.episodes.find(
+    (ep) => String(ep.chapter_id) === String(chapterIndex)
+  );
+
+  if (!target) return { title: "Episode tidak ditemukan" };
+
   return {
-    title: `${data.drama_title} - ${data.chapter_name}`,
-    description: data.drama_description?.slice(0, 160) || `${data.drama_title} ${data.chapter_name}`,
+    title: `${detail.drama.title} - Episode ${target.chapter_id}`,
+    description:
+      detail.drama.description?.slice(0, 160) ||
+      `${detail.drama.title} Episode ${target.chapter_id}`,
   };
 }
 
 export default async function WatchPage({ params }) {
   const { id, chapterIndex } = await params;
 
-  // Fetch episodes first to convert chapter_id to chapter_index
-  const episodes = await getDramaEpisodes(id);
+  const detail = await getDramaDetail(id);
 
-  if (!episodes || episodes.length === 0) {
+  if (!detail || !detail.episodes || detail.episodes.length === 0) {
     return (
       <Container>
         <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
@@ -74,8 +102,10 @@ export default async function WatchPage({ params }) {
     );
   }
 
-  // Find episode by chapter_id (chapterIndex param is actually chapter_id from URL)
-  const currentEpisode = episodes.find((ep) => ep.chapter_id === chapterIndex);
+  const episodes = detail.episodes;
+  const currentEpisode = episodes.find(
+    (ep) => String(ep.chapter_id) === String(chapterIndex)
+  );
 
   if (!currentEpisode) {
     return (
@@ -97,32 +127,9 @@ export default async function WatchPage({ params }) {
     );
   }
 
-  // Now fetch play data using the numeric chapter_index
-  const playData = await getDramaPlayData(id, currentEpisode.chapter_index);
-
-  if (!playData) {
-    return (
-      <Container>
-        <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-          <div>
-            <h1 className="text-2xl font-semibold">Episode tidak ditemukan</h1>
-            <p className="mt-2 text-muted">
-              Episode yang Anda cari tidak tersedia
-            </p>
-            <div className="mt-6">
-              <Link href={`/drama/${id}`} className="text-primary hover:underline">
-                Kembali ke Drama
-              </Link>
-            </div>
-          </div>
-        </div>
-      </Container>
-    );
-  }
-
   // Find next and prev episode based on current position
   const currentEpisodeIndex = episodes.findIndex(
-    (ep) => ep.chapter_id === chapterIndex
+    (ep) => String(ep.chapter_id) === String(chapterIndex)
   );
   const prevEpisode =
     currentEpisodeIndex > 0 ? episodes[currentEpisodeIndex - 1] : null;
@@ -131,7 +138,7 @@ export default async function WatchPage({ params }) {
       ? episodes[currentEpisodeIndex + 1]
       : null;
 
-  const playUrl = playData.full_play_url || playData.play_url;
+  const playUrl = currentEpisode.videoUrl;
 
   return (
     <Container>
@@ -143,20 +150,9 @@ export default async function WatchPage({ params }) {
               controls
               autoPlay
               className="w-full aspect-video"
-              poster={playData.drama_cover}
+              poster={currentEpisode.first_frame}
               src={playUrl}
             >
-              {playData.sublist && playData.sublist.length > 0 && (
-                playData.sublist.map((sub) => (
-                  <track
-                    key={sub.subtitleId}
-                    kind="subtitles"
-                    src={sub.url}
-                    srcLang={sub.language}
-                    label={`${sub.language} (${sub.format})`}
-                  />
-                ))
-              )}
               Your browser does not support the video tag.
             </video>
           </div>
@@ -191,48 +187,31 @@ export default async function WatchPage({ params }) {
               )}
             </div>
 
-            <h1 className="text-2xl font-semibold">{playData.drama_title}</h1>
-            <h2 className="mt-2 text-lg text-muted">{playData.chapter_name}</h2>
+            <h1 className="text-2xl font-semibold">{detail.drama.title}</h1>
+            <h2 className="mt-2 text-lg text-muted">{currentEpisode.chapter_name}</h2>
 
             <div className="mt-4 flex flex-wrap gap-2">
               <Badge>
-                {playData.chapter_index}/{playData.chapters} Episode
+                {currentEpisode.chapter_id}/{detail.drama.chapters} Episode
               </Badge>
-              {playData.chapter_duration && (
-                <Badge>{Math.round(playData.chapter_duration / 60)} menit</Badge>
-              )}
-              {playData.price === 0 && <Badge>Gratis</Badge>}
-              {playData.stats_info && playData.stats_info.length > 0 && (
-                <>
-                  {playData.stats_info.map((stat) =>
-                    stat.type === "play_total" ? (
-                      <Badge key={stat.type}>
-                        👁️ {(parseInt(stat.value) / 1000).toFixed(1)}K views
-                      </Badge>
-                    ) : stat.type === "fav_total" ? (
-                      <Badge key={stat.type}>
-                        ❤️ {(parseInt(stat.value) / 1000).toFixed(1)}K favorit
-                      </Badge>
-                    ) : null
-                  )}
-                </>
-              )}
+              <Badge>{currentEpisode.duration} Menit</Badge>
+              {currentEpisode.is_free && <Badge variant="success">Gratis</Badge>}
             </div>
 
-            {playData.drama_description && (
+            {detail.drama.description && (
               <div className="mt-4">
                 <h3 className="font-semibold">Sinopsis</h3>
                 <p className="mt-2 text-sm text-muted leading-relaxed">
-                  {playData.drama_description}
+                  {detail.drama.description}
                 </p>
               </div>
             )}
 
-            {playData.drama_tags && playData.drama_tags.length > 0 && (
+            {detail.drama.tags && detail.drama.tags.length > 0 && (
               <div className="mt-4">
                 <h3 className="font-semibold mb-2">Genre</h3>
                 <div className="flex flex-wrap gap-2">
-                  {playData.drama_tags.map((tag) => (
+                  {detail.drama.tags.map((tag) => (
                     <Badge key={tag}>{tag}</Badge>
                   ))}
                 </div>
@@ -245,7 +224,7 @@ export default async function WatchPage({ params }) {
         {episodes && episodes.length > 0 && (
           <EpisodeList
             dramaId={id}
-            currentChapterId={chapterIndex}
+            currentChapterId={String(chapterIndex)}
             allEpisodes={episodes}
           />
         )}

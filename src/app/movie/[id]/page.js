@@ -51,7 +51,7 @@ export async function generateMetadata({ params }) {
   const info = await getMovieInfo(id);
   if (!info) return { title: "Movie tidak ditemukan" };
   return {
-    title: `${info.title} - Dramanime`,
+    title: `${info.title} - Xenaflix`,
     description: info.description?.slice(0, 160) || `${info.title}`,
   };
 }
@@ -121,7 +121,7 @@ export default async function MovieDetailPage({ params }) {
                   className="h-auto w-full rounded-md object-cover"
                 />
               ) : (
-                <div className="aspect-3/4 w-full rounded-md bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-700" />
+                <div className="aspect-3/4 w-full rounded-md bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-700" />
               )}
             </div>
 
@@ -223,21 +223,26 @@ export default async function MovieDetailPage({ params }) {
                         <p className="text-sm text-muted">{season.maxEp} Episodes</p>
                       </div>
                       {season.resolutions && season.resolutions.length > 0 && (
-                        <div className="flex gap-1">
+                        <div className="flex gap-2">
                           {season.resolutions.map((res) => (
-                            <Badge key={res.resolution}>{res.resolution}p</Badge>
+                            <span
+                              key={res.resolution}
+                              className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted bg-white/5"
+                            >
+                              {res.resolution}p
+                            </span>
                           ))}
                         </div>
                       )}
                     </div>
                     
                     {/* Episode Grid */}
-                    <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
+                    <div className="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-8">
                       {Array.from({ length: season.maxEp }, (_, i) => i + 1).map((ep) => (
                         <Link
                           key={ep}
                           href={`/movie/${info.subjectId}/watch?s=${season.se}&e=${ep}`}
-                          className="aspect-square flex items-center justify-center rounded-lg border border-black/10 bg-black/5 text-sm font-medium hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors dark:border-white/10 dark:bg-white/5"
+                          className="aspect-square flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-base font-semibold text-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground transition-colors"
                         >
                           {ep}
                         </Link>

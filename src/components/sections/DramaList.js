@@ -21,19 +21,15 @@ export default function DramaList() {
     const seen = new Set();
 
     for (const item of incoming) {
-      const id = item?.drama_id || item?.id;
+      const id = item?.dope;
       if (!id || seen.has(id)) continue;
       seen.add(id);
 
       normalized.push({
         id,
-        title: item?.drama_title || item?.name || "Drama",
-        cover: item?.drama_cover || item?.cover,
-        episodes:
-          item?.chapters ??
-          item?.charge_chapters ??
-          item?.total_eps ??
-          item?.episodes,
+        title: item?.ngrand || "Drama",
+        cover: item?.pcoa,
+        episodes: item?.eext ? `${item.eext}` : "Unknown",
       });
     }
 
@@ -47,12 +43,12 @@ export default function DramaList() {
 
       try {
         const res = await fetch(
-          `https://dramabos.asia/api/meloshort/api/home?page=${pageNum}&page_size=${PAGE_SIZE}`,
+          `https://dramabos.asia/api/micro/api/v1/list?lang=id&page=${pageNum}&limit=${PAGE_SIZE}`,
           { headers: { accept: "application/json" } }
         );
         if (!res.ok) throw new Error("Failed to fetch drama");
         const json = await res.json();
-        const newData = json?.data || [];
+        const newData = json?.dassi?.lspee || [];
 
         const normalized = normalizeData(newData);
         setDramaList(normalized);

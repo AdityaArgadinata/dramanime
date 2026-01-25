@@ -1,4 +1,5 @@
 import Card from "../../components/ui/Card";
+import { searchDrama } from "../../lib/api";
 
 async function searchAnime(query) {
   if (!query) return [];
@@ -25,45 +26,6 @@ async function searchAnime(query) {
     });
 
     return unique.map((item) => ({ ...item, type: item.type || "Anime" }));
-  } catch (e) {
-    return [];
-  }
-}
-
-async function searchDrama(query) {
-  if (!query) return [];
-  try {
-    const res = await fetch(
-      `https://dramabos.asia/api/meloshort/api/search?q=${encodeURIComponent(query)}`,
-      {
-        headers: {
-          accept: "application/json",
-        },
-        cache: "no-store",
-      }
-    );
-    if (!res.ok) return [];
-    const json = await res.json();
-    const data = Array.isArray(json?.data) ? json.data : [];
-
-    const seen = new Set();
-    const normalized = [];
-
-    for (const item of data) {
-      const id = item.dramaId || item.drama_id || item.id;
-      if (!id || seen.has(id)) continue;
-      seen.add(id);
-
-      normalized.push({
-        slug: `drama/${id}`,
-        title: item.title || item.dramaTitle || item.name || "Drama",
-        img: item.cover || item.drama_cover,
-        status: item.chapterTotal ? `${item.chapterTotal} Episode` : undefined,
-        type: "Drama",
-      });
-    }
-
-    return normalized;
   } catch (e) {
     return [];
   }
@@ -111,7 +73,7 @@ async function searchMovie(query) {
 export default async function SearchResults({ query }) {
   const [animeResults, dramaResults, movieResults] = await Promise.all([
     searchAnime(query),
-    searchDrama(query),
+    searchDrama(query, 20),
     searchMovie(query),
   ]);
 

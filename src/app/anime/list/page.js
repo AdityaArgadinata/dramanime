@@ -21,7 +21,7 @@ function AnimeListSkeleton() {
 }
 
 export const metadata = {
-  title: "Semua Anime - Dramanime",
+  title: "Semua Anime - Xenaflix",
   description: "Jelajahi koleksi lengkap anime dengan subtitle Indonesia",
 };
 

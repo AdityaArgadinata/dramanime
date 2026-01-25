@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Card({ title, subtitle, cover, slug, type, episode, children, className = "", contextPath }) {
   const content = (
     <>
-      <div className="relative aspect-3/4 w-full overflow-hidden">
+      <div className="relative aspect-3/4 w-full overflow-hidden bg-linear-to-br from-zinc-800 to-zinc-900">
         {cover ? (
           <img 
             src={cover} 
@@ -11,6 +11,10 @@ export default function Card({ title, subtitle, cover, slug, type, episode, chil
             className="h-full w-full object-cover" 
             loading="lazy"
             decoding="async"
+            width="300"
+            height="400"
+            style={{ backgroundColor: '#27272a' }}
+            fetchPriority="low"
           />
         ) : (
           <div className="h-full w-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-700" />

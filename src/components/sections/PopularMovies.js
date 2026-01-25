@@ -35,7 +35,7 @@ export default function MovieSection({ movies }) {
             href={`/movie/${movie.detailPath}?id=${movie.subjectId}`}
             className="ios-surface ios-ring group overflow-hidden rounded-lg transition-opacity hover:opacity-80"
           >
-            <div className="relative w-full bg-black">
+            <div className="relative w-full bg-linear-to-br from-zinc-800 to-zinc-900">
               {movie.cover && (
                 <img
                   src={movie.cover}
@@ -43,6 +43,13 @@ export default function MovieSection({ movies }) {
                   className="h-auto w-full object-cover aspect-2/3"
                   loading="lazy"
                   decoding="async"
+                  width="300"
+                  height="450"
+                  style={{ backgroundColor: '#27272a' }}
+                  fetchPriority="low"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
                 />
               )}
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
